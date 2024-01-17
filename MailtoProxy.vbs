@@ -80,7 +80,6 @@ For i = 0 To UBound(attachArray)
     If Len(attachArray(i)) > 0 Then
         logFile.WriteLine("Attempting to attach file: " & attachArray(i))
         If objFSO.FileExists(Replace(attachArray(i), Chr(34), "")) Then
-            ' Remove the extra double quotes before passing the path to the Attachments.Add method
             oEmailItem.Attachments.Add(Replace(attachArray(i), Chr(34), ""))
             logFile.WriteLine("Attachment successful: " & attachArray(i))
         Else
@@ -158,7 +157,6 @@ Function GetAttachments(mailtoParams)
         attachmentPath = Replace(attachmentPath, "//", "\\")
         attachmentPath = Replace(attachmentPath, "/", "\")
 
-        ' Ensure the path is enclosed in double quotes to handle special characters
         attachmentPath = Chr(34) & attachmentPath & Chr(34)
 
         If Len(attachmentString) > 0 Then
