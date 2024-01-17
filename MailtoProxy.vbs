@@ -52,6 +52,8 @@ Function SendEmail(email, subject, body, attachments, logFile)
         strPhone = objUser.telephoneNumber
         strEmail = objUser.mail
 
+        logFile.WriteLine("Original Email: " & strEmail)
+
         signature = "Mit freundlichen Grüßen / Best regards" & vbCrLf & vbCrLf & _
                     strGiven & " " & strSurname & vbCrLf & _
                     "- " & strDepartment & " -" & vbCrLf & _
@@ -77,8 +79,9 @@ attachArray = Split(attachments, "|")
 For i = 0 To UBound(attachArray)
     If Len(attachArray(i)) > 0 Then
         logFile.WriteLine("Attempting to attach file: " & attachArray(i))
-        If objFSO.FileExists(attachArray(i)) Then
-            oEmailItem.Attachments.Add(attachArray(i))
+        If objFSO.FileExists(Replace(attachArray(i), Chr(34), "")) Then
+            ' Remove the extra double quotes before passing the path to the Attachments.Add method
+            oEmailItem.Attachments.Add(Replace(attachArray(i), Chr(34), ""))
             logFile.WriteLine("Attachment successful: " & attachArray(i))
         Else
             attachFailMsg = attachFailMsg & "Failed to attach file (does not exist or inaccessible): " & attachArray(i) & vbCrLf
@@ -155,9 +158,8 @@ Function GetAttachments(mailtoParams)
         attachmentPath = Replace(attachmentPath, "//", "\\")
         attachmentPath = Replace(attachmentPath, "/", "\")
 
-        If InStr(attachmentPath, " ") > 0 Then
-            attachmentPath = """" & attachmentPath & """"
-        End If
+        ' Ensure the path is enclosed in double quotes to handle special characters
+        attachmentPath = Chr(34) & attachmentPath & Chr(34)
 
         If Len(attachmentString) > 0 Then
             attachmentString = attachmentString & "|"
@@ -172,3 +174,4 @@ Function GetAttachments(mailtoParams)
 
     GetAttachments = attachmentString
 End Function
+
