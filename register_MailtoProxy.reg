@@ -1,0 +1,68 @@
+Windows Registry Editor Version 5.00
+
+    [HKEY_CLASSES_ROOT\mailto]
+
+    @="URL:MailTo Protocol"
+
+    "URL Protocol"=""
+ 
+    [HKEY_CLASSES_ROOT\mailto\shell\open\command]
+
+    @="\"cscript.exe\" \"c:\\MailtoProxy.vbs\" %1"
+ 
+    [HKEY_CLASSES_ROOT\MailtoProxy.Mailto]
+
+    @="URL:MailTo Protocol"
+
+    "URL Protocol"=""
+ 
+    [HKEY_CLASSES_ROOT\MailtoProxy.Mailto\shell\open\command]
+
+    @="\"cscript.exe\" \"c:\\MailtoProxy.vbs\" %1"
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\mailto]
+
+    @="URL:MailTo Protocol"
+
+    "URL Protocol"=""
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\mailto\shell\open\command]
+
+    @="\"cscript.exe\" \"c:\\MailtoProxy.vbs\" %1"
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\MailtoProxy.Mailto]
+
+    @="URL:MailTo Protocol"
+
+    "URL Protocol"=""
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\MailtoProxy.Mailto\shell\open\command]
+
+    @="\"cscript.exe\" \"c:\\MailtoProxy.vbs\" %1"
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\RegisteredApplications]
+
+    "MailtoProxy"="SOFTWARE\\MailtoProxy\\Capabilities"
+ 
+        [HKEY_LOCAL_MACHINE\SOFTWARE\MailtoProxy\Capabilities]
+
+    "ApplicationDescription"="Open mailto on local machine"
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\MailtoProxy\Capabilities\UrlAssociations]
+
+    "mailto"="MailtoProxy.Mailto"
+ 
+    [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\RegisteredApplications]
+
+    "MailtoProxy"="SOFTWARE\\Wow6432Node\\MailtoProxy\\Capabilities"
+ 
+      [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\MailtoProxy\Capabilities]
+
+    "ApplicationDescription"="Open mailto on local machine"
+ 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\MailtoProxy\Capabilities\UrlAssociations]
+
+    "mailto"="MailtoProxy.Mailto"
+ 
+    [-HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\mailto]	
+	
