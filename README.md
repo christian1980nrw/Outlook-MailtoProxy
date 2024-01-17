@@ -10,5 +10,6 @@ With this little tool we were are able to migrate a legacy software that was usi
 - The script creates a logfile at %temp%/MailtoProcessingLog.txt and adds a signature to the email by reading the personal data from the Microsoft Active Directory
   
 Test-Syntax at a cmd:
+
 cscript.exe c:\SLSP_Support\MailtoProxy.vbs mailto:test@test.de
 
