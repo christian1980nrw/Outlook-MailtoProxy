@@ -11,5 +11,5 @@ With this little tool we were are able to migrate a legacy software that was usi
   
 Test-Syntax at a cmd:
 
-cscript.exe c:\SLSP_Support\MailtoProxy.vbs mailto:test@test.de
+cscript.exe c:\MailtoProxy.vbs mailto:test@test.de
 
