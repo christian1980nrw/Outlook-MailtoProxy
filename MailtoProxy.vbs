@@ -6,29 +6,33 @@ logFilePath = tempFolder & "\\MailtoProcessingLog.txt"
 Set logFile = objFSO.CreateTextFile(logFilePath, True)
 
 If objArgs.Count > 0 Then
-    Dim mailto, email, subject, body, attachments
+    Dim mailto, email, subject, body, cc, bcc, attachments
     mailto = objArgs(0)
 
     logFile.WriteLine("Original mailto string: " & mailto)
 
     email = ParseAndDecodeMailto(mailto, "mailto:")
+    cc = ParseAndDecodeMailto(mailto, "cc=")
+    bcc = ParseAndDecodeMailto(mailto, "bcc=")
     subject = ParseAndDecodeMailto(mailto, "subject=")
     body = ParseAndDecodeMailto(mailto, "body=")
     attachments = GetAttachments(mailto)
 
     logFile.WriteLine("Email: " & email)
+    logFile.WriteLine("CC: " & cc)
+    logFile.WriteLine("BCC: " & bcc)
     logFile.WriteLine("Subject: " & subject)
     logFile.WriteLine("Body: " & body)
     logFile.WriteLine("Attachments: " & attachments)
 
-    SendEmail email, subject, body, attachments, logFile
+    SendEmail email, cc, bcc, subject, body, attachments, logFile
 
     logFile.Close
 Else
     WScript.Echo "No arguments provided. Please provide a mailto link."
 End If
 
-Function SendEmail(email, subject, body, attachments, logFile)
+Function SendEmail(email, cc, bcc, subject, body, attachments, logFile)
     Dim signature, adError
     adError = ""
     signature = "Signature will be empty."
@@ -54,6 +58,13 @@ Function SendEmail(email, subject, body, attachments, logFile)
 
         logFile.WriteLine("Original Email: " & strEmail)
 
+        If Right(strEmail, Len("spanplatte.com")) = "spanplatte.com" Then
+            strEmail = Left(strEmail, Len(strEmail) - Len("spanplatte.com")) & "spanplatte.de"
+            logFile.WriteLine("Modified Email: " & strEmail)
+        Else
+            logFile.WriteLine("No modification needed for Email: " & strEmail)
+        End If
+
         signature = "Mit freundlichen Grüßen / Best regards" & vbCrLf & vbCrLf & _
                     strGiven & " " & strSurname & vbCrLf & _
                     "- " & strDepartment & " -" & vbCrLf & _
@@ -61,15 +72,17 @@ Function SendEmail(email, subject, body, attachments, logFile)
                     strEmail & vbCrLf & vbCrLf & _
                     strCompany & vbCrLf & _
                     strAddress1 & ", " & strPostcode & " " & strAddress2 & vbCrLf
-		
+
 End If
 On Error GoTo 0
 
-Set OutApp = CreateObject("Outlook.Application")
-Set oEmailItem = OutApp.CreateItem(0)
+    Set OutApp = CreateObject("Outlook.Application")
+    Set oEmailItem = OutApp.CreateItem(0)
 
-oEmailItem.To = email
-oEmailItem.Subject = subject
+    oEmailItem.To = email
+    oEmailItem.CC = cc
+    oEmailItem.BCC = bcc
+    oEmailItem.Subject = subject
 
 Dim attachSuccess, attachFailMsg
 attachFailMsg = ""
@@ -99,8 +112,8 @@ End If
 If adError <> "" Then
     finalBody = finalBody & vbCrLf & vbCrLf & "Active Directory Error: " & adError
 End If
-oEmailItem.Body = finalBody & vbCrLf & vbCrLf & signature
-oEmailItem.Display
+    oEmailItem.Body = finalBody & vbCrLf & vbCrLf & signature
+    oEmailItem.Display
 
 End Function
 
