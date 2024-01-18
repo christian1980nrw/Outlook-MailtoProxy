@@ -58,13 +58,6 @@ Function SendEmail(email, cc, bcc, subject, body, attachments, logFile)
 
         logFile.WriteLine("Original Email: " & strEmail)
 
-        If Right(strEmail, Len("spanplatte.com")) = "spanplatte.com" Then
-            strEmail = Left(strEmail, Len(strEmail) - Len("spanplatte.com")) & "spanplatte.de"
-            logFile.WriteLine("Modified Email: " & strEmail)
-        Else
-            logFile.WriteLine("No modification needed for Email: " & strEmail)
-        End If
-
         signature = "Mit freundlichen Grüßen / Best regards" & vbCrLf & vbCrLf & _
                     strGiven & " " & strSurname & vbCrLf & _
                     "- " & strDepartment & " -" & vbCrLf & _
