@@ -60,7 +60,7 @@ Function SendEmail(email, subject, body, attachments, logFile)
                     "Tel. " & strPhone & vbCrLf & _
                     strEmail & vbCrLf & vbCrLf & _
                     strCompany & vbCrLf & _
-					strAddress1 & ", " & strPostcode & " " & strAddress2 & vbCrLf
+                    strAddress1 & ", " & strPostcode & " " & strAddress2 & vbCrLf
 		
 End If
 On Error GoTo 0
@@ -112,7 +112,7 @@ Function ParseAndDecodeMailto(mailto, key)
         If keyPos = 0 Then keyPos = Len(mailto) + 1
         parsedValue = Mid(mailto, Len("mailto:") + 1, keyPos - Len("mailto:") - 1)
     Else
-        keyPos = InStr(1, mailto, key, vbTextCompare) ' Case-insensitive search
+        keyPos = InStr(1, mailto, key, vbTextCompare)
         If keyPos > 0 Then
             keyPos = keyPos + Len(key)
             endPos = InStr(keyPos, mailto, "&")
@@ -122,14 +122,13 @@ Function ParseAndDecodeMailto(mailto, key)
     End If
     parsedValue = SimpleURLDecode(parsedValue)
 
-    ' Special handling for body text to remove any accidental inclusion of attachment info
     If key = "body=" Then
         Dim attachPos
-        attachPos = InStr(1, parsedValue, "Attach=", vbTextCompare) ' Case-insensitive search for "Attach="
+        attachPos = InStr(1, parsedValue, "Attach=", vbTextCompare)
         If attachPos > 0 Then
             parsedValue = Left(parsedValue, attachPos - 1)
         End If
-        parsedValue = Replace(parsedValue, ".?", ".") ' Removes any residual characters like ".?" before "Attach="
+        parsedValue = Replace(parsedValue, ".?", ".")
     End If
 
     ParseAndDecodeMailto = parsedValue
