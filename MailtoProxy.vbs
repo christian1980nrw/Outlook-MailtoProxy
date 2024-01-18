@@ -61,6 +61,7 @@ Function SendEmail(email, subject, body, attachments, logFile)
                     strEmail & vbCrLf & vbCrLf & _
                     strCompany & vbCrLf & _
 					strAddress1 & ", " & strPostcode & " " & strAddress2 & vbCrLf
+		
 End If
 On Error GoTo 0
 
@@ -111,7 +112,7 @@ Function ParseAndDecodeMailto(mailto, key)
         If keyPos = 0 Then keyPos = Len(mailto) + 1
         parsedValue = Mid(mailto, Len("mailto:") + 1, keyPos - Len("mailto:") - 1)
     Else
-        keyPos = InStr(mailto, key)
+        keyPos = InStr(1, mailto, key, vbTextCompare) ' Case-insensitive search
         If keyPos > 0 Then
             keyPos = keyPos + Len(key)
             endPos = InStr(keyPos, mailto, "&")
@@ -120,8 +121,20 @@ Function ParseAndDecodeMailto(mailto, key)
         End If
     End If
     parsedValue = SimpleURLDecode(parsedValue)
+
+    ' Special handling for body text to remove any accidental inclusion of attachment info
+    If key = "body=" Then
+        Dim attachPos
+        attachPos = InStr(1, parsedValue, "Attach=", vbTextCompare) ' Case-insensitive search for "Attach="
+        If attachPos > 0 Then
+            parsedValue = Left(parsedValue, attachPos - 1)
+        End If
+        parsedValue = Replace(parsedValue, ".?", ".") ' Removes any residual characters like ".?" before "Attach="
+    End If
+
     ParseAndDecodeMailto = parsedValue
 End Function
+
 
 Function SimpleURLDecode(str)
     Dim decodedStr
@@ -142,34 +155,39 @@ End Function
 Function GetAttachments(mailtoParams)
     Dim startPos, nextAttachmentStart, attachmentString, attachmentPath
     attachmentString = ""
-    startPos = InStr(mailtoParams, "Attach=")
+    startPos = 1
 
     While startPos > 0
-        startPos = startPos + Len("Attach=")
-        nextAttachmentStart = InStr(startPos, mailtoParams, "&Attach=")
-        If nextAttachmentStart = 0 Then
-            nextAttachmentStart = Len(mailtoParams) + 1
-        End If
+        Dim lowerMailtoParams
+        lowerMailtoParams = LCase(mailtoParams)
+        startPos = InStr(startPos, lowerMailtoParams, "attach=")
 
-        attachmentPath = Mid(mailtoParams, startPos, nextAttachmentStart - startPos)
-        attachmentPath = SimpleURLDecode(attachmentPath)
-
-        attachmentPath = Replace(attachmentPath, "//", "\\")
-        attachmentPath = Replace(attachmentPath, "/", "\")
-
-        attachmentPath = Chr(34) & attachmentPath & Chr(34)
-
-        If Len(attachmentString) > 0 Then
-            attachmentString = attachmentString & "|"
-        End If
-        attachmentString = attachmentString & attachmentPath
-
-        startPos = InStr(nextAttachmentStart, mailtoParams, "&Attach=")
         If startPos > 0 Then
-            startPos = startPos + 1
+            startPos = startPos + Len("attach=")
+            nextAttachmentStart = InStr(startPos, lowerMailtoParams, "&attach=")
+            If nextAttachmentStart = 0 Then
+                nextAttachmentStart = Len(mailtoParams) + 1
+            End If
+
+            attachmentPath = Mid(mailtoParams, startPos, nextAttachmentStart - startPos)
+            attachmentPath = SimpleURLDecode(attachmentPath)
+
+            attachmentPath = Replace(attachmentPath, "//", "\\")
+            attachmentPath = Replace(attachmentPath, "/", "\")
+
+            attachmentPath = Chr(34) & attachmentPath & Chr(34)
+
+            If Len(attachmentString) > 0 Then
+                attachmentString = attachmentString & "|"
+            End If
+            attachmentString = attachmentString & attachmentPath
+
+            startPos = InStr(nextAttachmentStart, lowerMailtoParams, "&attach=")
+            If startPos > 0 Then
+                startPos = startPos + 1
+            End If
         End If
     Wend
 
     GetAttachments = attachmentString
 End Function
-
